@@ -1,7 +1,10 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
+	"github.com/SCH-Discord/NoticeNotifier/database"
+	"github.com/SCH-Discord/NoticeNotifier/database/model"
 	"log"
 	"os"
 	"os/signal"
@@ -10,16 +13,23 @@ import (
 )
 
 func main() {
+	sqlDb, err := setupDatabase()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer sqlDb.Close()
+
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
 	fmt.Println("Ctrl + C를 통해 종료할 수 있습니다.")
 
+loop:
 	for {
 		select {
 		case <-done:
 			fmt.Println("프로그램을 종료합니다.")
-			os.Exit(0)
+			break loop
 		case <-time.After(timeUntilNextRun()):
 			doTask()
 		}
@@ -29,6 +39,24 @@ func main() {
 func doTask() {
 	//TODO
 	fmt.Println("test")
+}
+
+func setupDatabase() (*sql.DB, error) {
+	db, err := database.ConnectionDB()
+	if err != nil {
+		return nil, err
+	}
+	sqlDb, err := db.DB()
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.AutoMigrate(&model.Subscriber{})
+	if err != nil {
+		sqlDb.Close()
+		return nil, err
+	}
+	return sqlDb, nil
 }
 
 // 다음 실행 시간 구하기
