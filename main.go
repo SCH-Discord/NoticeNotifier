@@ -2,7 +2,7 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
+	"github.com/SCH-Discord/NoticeNotifier/crawler/mainN"
 	"github.com/SCH-Discord/NoticeNotifier/database"
 	"github.com/SCH-Discord/NoticeNotifier/database/model"
 	"log"
@@ -22,13 +22,13 @@ func main() {
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
-	fmt.Println("Ctrl + C를 통해 종료할 수 있습니다.")
+	log.Println("Ctrl + C를 통해 종료할 수 있습니다.")
 
 loop:
 	for {
 		select {
 		case <-done:
-			fmt.Println("프로그램을 종료합니다.")
+			log.Println("프로그램을 종료합니다.")
 			break loop
 		case <-time.After(timeUntilNextRun()):
 			doTask()
@@ -56,6 +56,14 @@ func setupDatabase() (*sql.DB, error) {
 		sqlDb.Close()
 		return nil, err
 	}
+
+	err = db.AutoMigrate(&model.Latest{})
+	if err != nil {
+		sqlDb.Close()
+		return nil, err
+	}
+
+	log.Println("ORM ready")
 	return sqlDb, nil
 }
 
