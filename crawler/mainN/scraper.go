@@ -1,7 +1,6 @@
 package mainN
 
 import (
-	"errors"
 	"fmt"
 	"github.com/SCH-Discord/NoticeNotifier/crawler"
 	"github.com/SCH-Discord/NoticeNotifier/database"
@@ -85,24 +84,6 @@ func Scrape() {
 	db.Where("Main = ?", true).Find(&subscribers)
 
 	for _, subscriber := range subscribers {
-		go send(subscriber, &embeds)
-	}
-}
-
-func send(subscriber *model.Subscriber, embeds *[]webhook.Embed) {
-	err := webhook.SendMessage(subscriber.URL, &webhook.Message{
-		Username:  "대학공지",
-		AvatarUrl: "https://raw.githubusercontent.com/SCH-Discord/.github/main/profile/logo.png",
-		Embeds:    embeds,
-	})
-	if err == nil {
-		return
-	}
-	var notOk *webhook.NotOk
-	if errors.As(err, &notOk) {
-		log.Printf("remove %s\n", subscriber.URL)
-		database.ConnectionDB().Delete(subscriber)
-	} else {
-		log.Println(err)
+		go crawler.Send("대학공지", subscriber, &embeds)
 	}
 }
