@@ -11,7 +11,7 @@ import (
 func Send(name string, subscriber *model.Subscriber, embeds *[]webhook.Embed) {
 	err := webhook.SendMessage(subscriber.URL, &webhook.Message{
 		Username:  name,
-		AvatarUrl: "https://raw.githubusercontent.com/SCH-Discord/image/main/profile.jpg",
+		AvatarUrl: "https://raw.githubusercontent.com/SCH-Discord/image/main/profile.png",
 		Embeds:    embeds,
 	})
 	if err == nil {
