@@ -63,7 +63,7 @@ func Scrape() {
 				NoticeType: model.MainNotice,
 				URL:        href,
 			})
-			isFirst = true
+			isFirst = false
 		}
 		embeds = append(embeds, webhook.Embed{
 			Title: title,
@@ -91,8 +91,9 @@ func Scrape() {
 
 func send(subscriber *model.Subscriber, embeds *[]webhook.Embed) {
 	err := webhook.SendMessage(subscriber.URL, &webhook.Message{
-		Username: "대학공지",
-		Embeds:   embeds,
+		Username:  "대학공지",
+		AvatarUrl: "https://raw.githubusercontent.com/SCH-Discord/.github/main/profile/logo.png",
+		Embeds:    embeds,
 	})
 	if err == nil {
 		return
