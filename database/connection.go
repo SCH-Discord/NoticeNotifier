@@ -10,6 +10,7 @@ import (
 
 var connDB *gorm.DB = nil
 
+// DB 연결
 func ConnectionDB() *gorm.DB {
 	if connDB != nil {
 		db, err := connDB.DB()

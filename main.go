@@ -43,6 +43,7 @@ func doTask() {
 	fmt.Println("test")
 }
 
+// 데이터 베이스 설정
 func setupDatabase() (*sql.DB, error) {
 	db := database.ConnectionDB()
 	sqlDb, err := db.DB()

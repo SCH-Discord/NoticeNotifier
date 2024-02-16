@@ -8,6 +8,7 @@ import (
 
 const webhookSuccess = 204
 
+// 디스코드 웹후크를 전송
 func SendMessage(url string, message *Message) error {
 	payload := new(bytes.Buffer)
 
