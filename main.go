@@ -13,6 +13,8 @@ import (
 )
 
 func main() {
+	log.SetFlags(log.Ldate | log.Lmicroseconds)
+
 	sqlDb, err := setupDatabase()
 	if err != nil {
 		log.Fatal(err)
@@ -42,10 +44,7 @@ func doTask() {
 }
 
 func setupDatabase() (*sql.DB, error) {
-	db, err := database.ConnectionDB()
-	if err != nil {
-		return nil, err
-	}
+	db := database.ConnectionDB()
 	sqlDb, err := db.DB()
 	if err != nil {
 		return nil, err
