@@ -3,17 +3,10 @@ package webhook
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"github.com/valyala/fasthttp"
 )
 
-type NotOk struct {
-	Code int
-}
-
-func (o *NotOk) Error() string {
-	return fmt.Sprintf("NotOk: StatusCode is %d", o.Code)
-}
+const webhookSuccess = 204
 
 func SendMessage(url string, message *Message) error {
 	payload := new(bytes.Buffer)
@@ -21,8 +14,6 @@ func SendMessage(url string, message *Message) error {
 	if err := json.NewEncoder(payload).Encode(message); err != nil {
 		return err
 	}
-
-	client := &fasthttp.Client{}
 
 	req := fasthttp.AcquireRequest()
 	req.SetRequestURI(url)
@@ -32,11 +23,11 @@ func SendMessage(url string, message *Message) error {
 
 	resp := fasthttp.AcquireResponse()
 
-	if err := client.Do(req, resp); err != nil {
+	if err := fasthttp.Do(req, resp); err != nil {
 		return err
 	}
 
-	if resp.StatusCode() != fasthttp.StatusOK {
+	if resp.StatusCode() != webhookSuccess {
 		return &NotOk{resp.StatusCode()}
 	}
 
