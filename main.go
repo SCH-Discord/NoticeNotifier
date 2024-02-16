@@ -39,8 +39,8 @@ loop:
 }
 
 func doTask() {
-	//TODO
-	fmt.Println("test")
+	log.Println("Starting a scheduled task")
+	go mainN.Scrape()
 }
 
 // 데이터 베이스 설정
