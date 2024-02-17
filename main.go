@@ -6,6 +6,7 @@ import (
 	"github.com/SCH-Discord/NoticeNotifier/database"
 	"github.com/SCH-Discord/NoticeNotifier/database/model"
 	"log"
+	"math/rand"
 	"os"
 	"os/signal"
 	"syscall"
@@ -82,7 +83,7 @@ func nextRunHour(currentHour int) int {
 // 다음 실행 시간 까지 남은 시간리턴
 func timeUntilNextRun() time.Duration {
 	now := time.Now()
-	targetTime := time.Date(now.Year(), now.Month(), now.Day(), nextRunHour(now.Hour()), 0, 0, 0, now.Location())
+	targetTime := time.Date(now.Year(), now.Month(), now.Day(), nextRunHour(now.Hour()), rand.Intn(5), rand.Intn(59), now.Nanosecond(), now.Location())
 
 	if now.After(targetTime) {
 		targetTime = targetTime.Add(24 * time.Hour)
