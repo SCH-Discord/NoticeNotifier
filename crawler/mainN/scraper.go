@@ -96,7 +96,7 @@ func scrape(code string, name string) {
 }
 
 func Scrape() {
-	scrape(university, "대학공지")
-	scrape(academic, "학사공지")
-	scrape(scholarship, "장학공지")
+	scrape(university, "메인포털(대학공지)")
+	scrape(academic, "메인포털(학사공지)")
+	scrape(scholarship, "메인포털(장학공지)")
 }
