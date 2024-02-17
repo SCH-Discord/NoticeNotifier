@@ -9,12 +9,15 @@ import (
 	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"
 	"log"
-	"strings"
 )
 
-const target = "https://home.sch.ac.kr/sch/06/010100.jsp"
+const target = "https://home.sch.ac.kr/sch/06/%s.jsp"
 
-func Scrape() {
+const university = "010100"  // 대학공지
+const academic = "010200"    // 학사공지
+const scholarship = "010300" // 장학공지
+
+func scrape(code string, name string) {
 	ctx, allocatorCancel, ctxCancel := crawler.CreateCrawler()
 
 	defer allocatorCancel()
@@ -22,7 +25,7 @@ func Scrape() {
 
 	var nodes []*cdp.Node
 	err := chromedp.Run(ctx,
-		chromedp.Navigate(target),
+		chromedp.Navigate(fmt.Sprintf(target, code)),
 		chromedp.Nodes("#contents_wrap > div > div.board_list > table > tbody > tr", &nodes, chromedp.ByQueryAll),
 	)
 
@@ -32,13 +35,16 @@ func Scrape() {
 
 	var db = database.ConnectionDB()
 	var latest *model.Latest
-	db.Where("notice_type=?", model.MainNotice).Find(&latest)
+	db.Where("notice_type=?", fmt.Sprintf("%s%s", model.MainNotice, code)).Find(&latest)
+
+	nowDate := crawler.NowDate()
 
 	isFirst := true
 	var title string
 	var href string
 	var ok bool
 	var writer string
+	var date string
 	var embeds []webhook.Embed
 
 	for _, node := range nodes {
@@ -46,12 +52,13 @@ func Scrape() {
 			chromedp.Text("a", &title, chromedp.ByQuery, chromedp.FromNode(node)),
 			chromedp.AttributeValue("a", "href", &href, &ok, chromedp.ByQuery, chromedp.FromNode(node)),
 			chromedp.Text(".writer", &writer, chromedp.ByQuery, chromedp.FromNode(node)),
+			chromedp.Text(".date", &date, chromedp.ByQuery, chromedp.FromNode(node)),
 		)
 		if err != nil {
 			log.Println(err)
 			continue
 		}
-		if !strings.Contains(title, "NEW") {
+		if date != nowDate {
 			continue
 		}
 		if latest != nil && latest.URL == href {
@@ -59,7 +66,7 @@ func Scrape() {
 		}
 		if isFirst {
 			db.Save(&model.Latest{
-				NoticeType: model.MainNotice,
+				NoticeType: fmt.Sprintf("%s%s", model.MainNotice, code),
 				URL:        href,
 			})
 			isFirst = false
@@ -84,6 +91,12 @@ func Scrape() {
 	db.Where("Main = ?", true).Find(&subscribers)
 
 	for _, subscriber := range subscribers {
-		go crawler.Send("대학공지", subscriber, &embeds)
+		go crawler.Send(name, subscriber, &embeds)
 	}
+}
+
+func Scrape() {
+	scrape(university, "대학공지")
+	scrape(academic, "학사공지")
+	scrape(scholarship, "장학공지")
 }
