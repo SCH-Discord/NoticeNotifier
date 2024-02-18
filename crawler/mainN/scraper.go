@@ -9,6 +9,8 @@ import (
 	"github.com/chromedp/cdproto/cdp"
 	"github.com/chromedp/chromedp"
 	"log"
+	"math/big"
+	"time"
 )
 
 const target = "https://home.sch.ac.kr/sch/06/%s.jsp"
@@ -31,15 +33,23 @@ func scrape(code string, name string) {
 
 	if err != nil {
 		log.Println(err)
+		return
 	}
 
 	var db = database.ConnectionDB()
-	var latest *model.Latest
-	db.Where("notice_type=?", fmt.Sprintf("%s%s", model.MainNotice, code)).Find(&latest)
+	var mLatest *model.Latest
+	db.Where("notice_type=?", fmt.Sprintf("%s%s", model.MainNotice, code)).Find(&mLatest)
+
+	var latest big.Int
+	if mLatest != nil {
+		latest.SetString(mLatest.URL, 10)
+	}
 
 	nowDate := crawler.NowDate()
 
-	isFirst := true
+	var newLatest big.Int
+	var articleNo big.Int
+	var articleNoStr string
 	var title string
 	var href string
 	var ok bool
@@ -61,19 +71,24 @@ func scrape(code string, name string) {
 		if date != nowDate {
 			continue
 		}
-		if latest != nil && latest.URL == href {
-			break
+		_, err := fmt.Sscanf(href, "?mode=view&article_no=%s", &articleNoStr)
+		if err != nil {
+			log.Println(err)
+			continue
 		}
-		if isFirst {
-			db.Save(&model.Latest{
-				NoticeType: fmt.Sprintf("%s%s", model.MainNotice, code),
-				URL:        href,
-			})
-			isFirst = false
+		articleNo.SetString(articleNoStr, 10)
+		if cmp := latest.Cmp(&articleNo); cmp == 0 || cmp == 1 {
+			log.Println(latest.String(), articleNo.String())
+			log.Println(cmp)
+			continue
+		} else if newLatest.Cmp(&articleNo) == -1 {
+			log.Println(latest.String(), articleNo.String())
+			log.Println(newLatest.String())
+			newLatest.SetString(articleNoStr, 10)
 		}
 		embeds = append(embeds, webhook.Embed{
 			Title: title,
-			Url:   fmt.Sprintf("%s%s", target, href),
+			Url:   fmt.Sprintf("%s%s", fmt.Sprintf(target, code), href),
 			Fields: &[]webhook.Field{
 				{
 					Name:  "작성자",
@@ -83,7 +98,12 @@ func scrape(code string, name string) {
 		})
 	}
 
-	if embeds == nil {
+	if newLatest.String() != "0" {
+		db.Save(&model.Latest{
+			NoticeType: fmt.Sprintf("%s%s", model.MainNotice, code),
+			URL:        newLatest.String(),
+		})
+	} else {
 		return
 	}
 
@@ -96,7 +116,15 @@ func scrape(code string, name string) {
 }
 
 func Scrape() {
+	log.Println("Start scrape 메인포털")
+	log.Println("메인 포털(1/3)")
 	scrape(university, "메인포털(대학공지)")
+	time.Sleep(1000)
+	log.Println("메인 포털(2/3)")
 	scrape(academic, "메인포털(학사공지)")
+	time.Sleep(1000)
+	log.Println("메인 포털(3/3)")
 	scrape(scholarship, "메인포털(장학공지)")
+	time.Sleep(1000)
+	log.Println("Completed scrape 메인포털")
 }
