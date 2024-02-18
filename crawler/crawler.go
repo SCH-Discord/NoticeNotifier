@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+const WaitTime = 50 * time.Millisecond
+
 func CreateCrawler() (context.Context, context.CancelFunc, context.CancelFunc) {
 	allocatorContext, allocatorCancel := chromedp.NewRemoteAllocator(context.Background(), "wss://chrome:9222")
 	ctx, ctxCancel := chromedp.NewContext(allocatorContext)
