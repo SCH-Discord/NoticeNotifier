@@ -20,10 +20,11 @@ const academic = 2 // 학술공지
 const event = 3    // 교육/행사공지
 
 func scrape(code int, name string) {
-	ctx, allocatorCancel, ctxCancel := crawler.CreateCrawler()
+	ctx, allocatorCancel, ctxCancel, timeoutCancel := crawler.CreateCrawler()
 
 	defer allocatorCancel()
 	defer ctxCancel()
+	defer timeoutCancel()
 
 	var nodes []*cdp.Node
 	err := chromedp.Run(ctx,
@@ -34,6 +35,7 @@ func scrape(code int, name string) {
 
 	if err != nil {
 		log.Println(err)
+		return
 	}
 
 	var db = database.ConnectionDB()

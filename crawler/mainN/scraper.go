@@ -20,10 +20,11 @@ const academic = "010200"    // 학사공지
 const scholarship = "010300" // 장학공지
 
 func scrape(code string, name string) {
-	ctx, allocatorCancel, ctxCancel := crawler.CreateCrawler()
+	ctx, allocatorCancel, ctxCancel, timeoutCancel := crawler.CreateCrawler()
 
 	defer allocatorCancel()
 	defer ctxCancel()
+	defer timeoutCancel()
 
 	var nodes []*cdp.Node
 	err := chromedp.Run(ctx,

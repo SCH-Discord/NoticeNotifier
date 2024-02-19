@@ -15,11 +15,13 @@ import (
 
 const WaitTime = 50 * time.Millisecond
 
-func CreateCrawler() (context.Context, context.CancelFunc, context.CancelFunc) {
+func CreateCrawler() (context.Context, context.CancelFunc, context.CancelFunc, context.CancelFunc) {
 	allocatorContext, allocatorCancel := chromedp.NewRemoteAllocator(context.Background(), "wss://chrome:9222")
 	ctx, ctxCancel := chromedp.NewContext(allocatorContext)
 
-	return ctx, allocatorCancel, ctxCancel
+	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, 3*time.Minute)
+
+	return timeoutCtx, allocatorCancel, ctxCancel, timeoutCancel
 }
 
 func Send(name string, subscriber *model.Subscriber, embeds *[]webhook.Embed) {
