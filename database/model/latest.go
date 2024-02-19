@@ -9,7 +9,7 @@ const SWNotice = "sw"
 
 type Latest struct {
 	NoticeType string `gorm:"primaryKey;size:20"`
-	URL        string `gorm:"not null"`
+	URL        string `gorm:"not null;size:100"`
 }
 
 func (l *Latest) TableName() string {
