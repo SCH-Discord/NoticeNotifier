@@ -28,6 +28,7 @@ func scrape(code string, name string) {
 	var nodes []*cdp.Node
 	err := chromedp.Run(ctx,
 		chromedp.Navigate(fmt.Sprintf(target, code)),
+		chromedp.WaitReady("#contents_wrap > div > div.board_list > table > tbody", chromedp.ByQuery),
 		chromedp.Nodes("#contents_wrap > div > div.board_list > table > tbody > tr", &nodes, chromedp.ByQueryAll),
 	)
 
