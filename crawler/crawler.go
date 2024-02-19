@@ -9,6 +9,7 @@ import (
 	"github.com/SCH-Discord/NoticeNotifier/webhook"
 	"github.com/chromedp/chromedp"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -52,4 +53,11 @@ func NowDate() string {
 		date = fmt.Sprintf("%d-%02d-%02d", now.Year(), now.Month(), now.Day())
 	}
 	return date
+}
+
+func FixTitle(title string) string {
+	if strings.HasSuffix(title, " NEW") {
+		return strings.TrimSuffix(title, " NEW")
+	}
+	return title
 }

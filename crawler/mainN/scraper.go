@@ -82,12 +82,10 @@ func scrape(code string, name string) {
 			log.Println(cmp)
 			continue
 		} else if newLatest.Cmp(&articleNo) == -1 {
-			log.Println(latest.String(), articleNo.String())
-			log.Println(newLatest.String())
 			newLatest.SetString(articleNoStr, 10)
 		}
 		embeds = append(embeds, webhook.Embed{
-			Title: title,
+			Title: crawler.FixTitle(title),
 			Url:   fmt.Sprintf("%s%s", fmt.Sprintf(target, code), href),
 			Fields: &[]webhook.Field{
 				{
@@ -120,9 +118,11 @@ func Scrape() {
 	log.Println("메인 포털(1/3)")
 	scrape(university, "메인포털(대학공지)")
 	time.Sleep(crawler.WaitTime)
+
 	log.Println("메인 포털(2/3)")
 	scrape(academic, "메인포털(학사공지)")
 	time.Sleep(crawler.WaitTime)
+
 	log.Println("메인 포털(3/3)")
 	scrape(scholarship, "메인포털(장학공지)")
 	time.Sleep(crawler.WaitTime)
