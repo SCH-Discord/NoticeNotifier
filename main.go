@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/SCH-Discord/NoticeNotifier/crawler/libraryN"
 	"github.com/SCH-Discord/NoticeNotifier/crawler/mainN"
+	"github.com/SCH-Discord/NoticeNotifier/crawler/swN"
 	"github.com/SCH-Discord/NoticeNotifier/database"
 	"github.com/SCH-Discord/NoticeNotifier/database/model"
 	"log"
@@ -43,7 +44,9 @@ loop:
 func doTask() {
 	log.Println("Starting a scheduled task")
 	mainN.Scrape()
+	swN.Scrape()
 	libraryN.Scrape()
+	log.Println("Completed a scheduled task")
 }
 
 // 데이터 베이스 설정

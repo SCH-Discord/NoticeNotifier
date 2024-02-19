@@ -13,13 +13,13 @@ import (
 	"time"
 )
 
-const WaitTime = 50 * time.Millisecond
+const WaitTime = 500 * time.Millisecond
 
 func CreateCrawler() (context.Context, context.CancelFunc, context.CancelFunc, context.CancelFunc) {
 	allocatorContext, allocatorCancel := chromedp.NewRemoteAllocator(context.Background(), "wss://chrome:9222")
 	ctx, ctxCancel := chromedp.NewContext(allocatorContext)
 
-	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, 3*time.Minute)
+	timeoutCtx, timeoutCancel := context.WithTimeout(ctx, 100*time.Second)
 
 	return timeoutCtx, allocatorCancel, ctxCancel, timeoutCancel
 }
