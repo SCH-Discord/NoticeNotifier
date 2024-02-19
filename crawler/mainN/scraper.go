@@ -78,12 +78,11 @@ func scrape(code string, name string) {
 		}
 		articleNo.SetString(articleNoStr, 10)
 		if cmp := latest.Cmp(&articleNo); cmp == 0 || cmp == 1 {
-			log.Println(latest.String(), articleNo.String())
-			log.Println(cmp)
 			continue
 		} else if newLatest.Cmp(&articleNo) == -1 {
 			newLatest.SetString(articleNoStr, 10)
 		}
+
 		embeds = append(embeds, webhook.Embed{
 			Title: crawler.FixTitle(title),
 			Url:   fmt.Sprintf("%s%s", fmt.Sprintf(target, code), href),

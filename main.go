@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"github.com/SCH-Discord/NoticeNotifier/crawler/libraryN"
 	"github.com/SCH-Discord/NoticeNotifier/crawler/mainN"
 	"github.com/SCH-Discord/NoticeNotifier/database"
 	"github.com/SCH-Discord/NoticeNotifier/database/model"
@@ -34,14 +35,15 @@ loop:
 			log.Println("프로그램을 종료합니다.")
 			break loop
 		case <-time.After(timeUntilNextRun()):
-			doTask()
+			go doTask()
 		}
 	}
 }
 
 func doTask() {
 	log.Println("Starting a scheduled task")
-	go mainN.Scrape()
+	mainN.Scrape()
+	libraryN.Scrape()
 }
 
 // 데이터 베이스 설정
