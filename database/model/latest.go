@@ -3,7 +3,6 @@ package model
 const MainNotice = "main"
 const LibraryNotice = "library"
 const InstagramNotice = "instagram"
-const SanhakNotice = "sanhak"
 const StudentNotice = "student"
 const SWNotice = "sw"
 

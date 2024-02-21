@@ -7,7 +7,6 @@ type Subscriber struct {
 	Library   bool   `gorm:"not null"`
 	Instagram bool   `gorm:"not null"`
 	Student   bool   `gorm:"not null"`
-	Sanhak    bool   `gorm:"not null"`
 	SW        bool   `gorm:"not null"`
 }
 
