@@ -10,6 +10,7 @@ import (
 	"github.com/chromedp/chromedp"
 	"log"
 	"math/big"
+	"net/url"
 	"time"
 )
 
@@ -73,11 +74,12 @@ func scrape(code string, name string) {
 		if date != nowDate {
 			continue
 		}
-		_, err := fmt.Sscanf(href, "?mode=view&article_no=%s", &articleNoStr)
+		parsedURL, err := url.Parse(href)
 		if err != nil {
 			log.Println(err)
 			continue
 		}
+		articleNoStr = parsedURL.Query().Get("article_no")
 		articleNo.SetString(articleNoStr, 10)
 		if cmp := latest.Cmp(&articleNo); cmp == 0 || cmp == 1 {
 			continue
