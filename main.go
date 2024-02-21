@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/SCH-Discord/NoticeNotifier/crawler/libraryN"
 	"github.com/SCH-Discord/NoticeNotifier/crawler/mainN"
+	"github.com/SCH-Discord/NoticeNotifier/crawler/studentN"
 	"github.com/SCH-Discord/NoticeNotifier/crawler/swN"
 	"github.com/SCH-Discord/NoticeNotifier/database"
 	"github.com/SCH-Discord/NoticeNotifier/database/model"
@@ -45,6 +46,7 @@ func doTask() {
 	log.Println("Starting a scheduled task")
 	mainN.Scrape()
 	swN.Scrape()
+	studentN.Scrape()
 	libraryN.Scrape()
 	log.Println("Completed a scheduled task")
 }
