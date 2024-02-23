@@ -115,11 +115,11 @@ func Scrape() {
 	time.Sleep(crawler.WaitTime)
 
 	log.Println("도서관(2/3)")
-	scrape(academic, "도서관)")
+	scrape(academic, "도서관")
 	time.Sleep(crawler.WaitTime)
 
 	log.Println("도서관(3/3)")
-	scrape(event, "도서관)")
+	scrape(event, "도서관")
 	time.Sleep(crawler.WaitTime)
 	log.Println("Completed scrape 도서관")
 }

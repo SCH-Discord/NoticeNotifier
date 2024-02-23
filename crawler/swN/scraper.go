@@ -14,9 +14,10 @@ import (
 	"time"
 )
 
+const name = "SW중심대학산업단"
 const target = "https://home.sch.ac.kr/sw/07/010000.jsp"
 
-func scrape(name string) {
+func scrape() {
 	ctx, allocatorCancel, ctxCancel, timeoutCancel := crawler.CreateCrawler()
 
 	defer allocatorCancel()
@@ -114,7 +115,7 @@ func scrape(name string) {
 
 func Scrape() {
 	log.Println("Start scrape SW중심대학산업단")
-	scrape("SW중심대학산업단")
+	scrape()
 	time.Sleep(crawler.WaitTime)
 	log.Println("Completed scrape SW중심대학산업단")
 }
