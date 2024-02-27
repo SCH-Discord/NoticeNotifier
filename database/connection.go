@@ -23,7 +23,7 @@ func ConnectionDB() *gorm.DB {
 	const maxRetries = 10
 
 	for i := 0; i < maxRetries; i++ {
-		dsn := fmt.Sprintf("root:%s@tcp(mariadb-dev)/%s?parseTime=True", config.DBPassword(), config.DBName())
+		dsn := fmt.Sprintf("root:%s@tcp(mariadb)/%s?parseTime=True", config.DBPassword(), config.DBName())
 		db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 		if err == nil {
 			connDB = db
