@@ -31,7 +31,7 @@ func SendMessage(url string, message *Message) error {
 	}
 
 	if resp.StatusCode() != webhookSuccess {
-		return &NotOk{resp.StatusCode()}
+		return &NotOk{resp.StatusCode(), string(resp.Body())}
 	}
 
 	if newM != nil {
