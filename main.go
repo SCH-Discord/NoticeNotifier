@@ -75,16 +75,12 @@ func setupDatabase() (*sql.DB, error) {
 	return sqlDb, nil
 }
 
-// 다음 실행 시간 구하기
-var targetHours = []int{10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
-
+// AM 10시 ~ PM 8시
 func nextRunHour(currentHour int) int {
-	for _, h := range targetHours {
-		if h > currentHour {
-			return h
-		}
+	if currentHour < 10 || currentHour > 19 {
+		return 10
 	}
-	return targetHours[0]
+	return currentHour + 1
 }
 
 // 다음 실행 시간 까지 남은 시간리턴
